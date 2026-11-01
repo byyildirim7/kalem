@@ -41,11 +41,11 @@ Bu tablo bir kişinin zevkiyle kuruldu: 20 araç aynı sahneyle yarıştırıld�
    Teknik sıkıştırma yok ("sayı koşuyor" değil "sahnenin içinde artan bir sayı var").
    **Bir sahne = bir motor.** Sahnede birden çok iş varsa ekranı kaplayan ana iş motoru belirler, yan işler yardımcı olarak girer.
 2. **Ortak dosyaları yaz.** `<proje>/zaman.json` (fps, boyut, geçiş kare sayısı, sahne listesi ve kare sayıları) ve `<proje>/BRIEF.md` (ortak görsel dil, gerçekler, her sahnenin tarifi, teslim sözleşmesi). Örnek: `ornek/ucan-makine/` (varsa).
-3. **Sahneleri üret.** Kâğıt dokusu, renkler ve yazı tipleri BRIEF'te bir kez tanımlanır, her sahne aynısını kullanır; videonun tek elden çıkmış gibi durması buna bağlı.
+3. **Sahneleri üret.** Kağıt dokusu, renkler ve yazı tipleri BRIEF'te bir kez tanımlanır, her sahne aynısını kullanır; videonun tek elden çıkmış gibi durması buna bağlı.
     Her sahne kendi klasöründe: `<proje>/sahneler/<NN-motor>/` → `calistir.sh`, `video.mp4`, `kontrol.png`, `olaylar.json`. Sahneler birbirinden bağımsızdır, paralel üretilebilir (her sahneye ayrı ajan).
 4. **Kontrol.** Her sahnenin `kontrol.png`'sine ve birkaç tam karesine bak: yazı taşıyor mu, boş kare var mı, renkler ortak dilde mi, ilk kare dolu mu.
 5. **Birleştir.** `python3 birlestir.py <proje> [--gecis BookFlip]` → geçişler + ses → `<proje>/cikti.mp4`.
-   İzleyiciye hangi sahnenin hangi motorla çizildiğini göstermek istersen `--etiket` ekle: zaman.json'da her sahneye `"etiket": ["Paper.js", "kendi kendine çizilen kalem çizgisi"]` (isteğe bağlı üçüncü satır yardımcı için), ilk geçiş için `"gecis_etiketi"`. Her sahnenin sol altına defter kâğıdı rengi küçük bir kart basılır.
+   İzleyiciye hangi sahnenin hangi motorla çizildiğini göstermek istersen `--etiket` ekle: zaman.json'da her sahneye `"etiket": ["Paper.js", "kendi kendine çizilen kalem çizgisi"]` (isteğe bağlı üçüncü satır yardımcı için), ilk geçiş için `"gecis_etiketi"`. Her sahnenin sol altına defter kağıdı rengi küçük bir kart basılır.
 6. **Denetim.** Taze bir ajana yalnız kontrol karelerini ve BRIEF'i ver, sor: "İzleyen kişi burada 'olmaz öyle şey' der mi?" Bulunanları düzelt, sonra kullanıcıya aç.
 
 ## Teknik sözleşme

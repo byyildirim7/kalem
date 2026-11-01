@@ -4,7 +4,7 @@
 
 > Her sahnenin kendi kalemi var.
 
-Yapay zekâya kodla video yaptırınca hepsi birbirine benziyor, çünkü bütün sahneleri tek bir motorla çiziyor. **Kalem**, Claude Code için yazılmış bir skill. Videoyu sahnelere böler, her sahnenin içinde ne olduğuna bakar ve onu en iyi çizen motoru seçer. Sonra sahneleri o motorlarla üretir, sayfa çevirme gibi geçişlerle birleştirir ve görüntüye kare kare oturan efekt sesini ekler.
+Yapay zekaya kodla video yaptırınca hepsi birbirine benziyor, çünkü bütün sahneleri tek bir motorla çiziyor. **Kalem**, Claude Code için yazılmış bir skill. Videoyu sahnelere böler, her sahnenin içinde ne olduğuna bakar ve onu en iyi çizen motoru seçer. Sonra sahneleri o motorlarla üretir, sayfa çevirme gibi geçişlerle birleştirir ve görüntüye kare kare oturan efekt sesini ekler.
 
 Sen yalnızca ne istediğini anlatırsın. Hangi sahnenin hangi kalemle çizileceğine skill karar verir.
 

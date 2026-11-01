@@ -5,13 +5,13 @@ Sahneler sonra sayfa çevirme geçişleriyle birleşir, üstüne kareye kilitli 
 
 ## Ortak görsel dil (hepsi aynı defterden çıkmış gibi durmalı)
 - 1920×1080, 30 fps. Kare sayısı `zaman.json`'da (çoğu 240 = 8 sn, Three.js 300 = 10 sn). TAM bu kadar kare.
-- Zemin: Leonardo defteri kâğıdı `#E8D9B8`, çok hafif lekeli/dokulu (tohumlu, kare numarasından bağımsız sabit doku). Kenarlarda hafif kararma.
+- Zemin: Leonardo defteri kağıdı `#E8D9B8`, çok hafif lekeli/dokulu (tohumlu, kare numarasından bağımsız sabit doku). Kenarlarda hafif kararma.
 - Mürekkep `#2b1d12`, soluk mürekkep `#6b5640`, TEK vurgu kırmızısı `#b3261e` (sahnede en fazla bir iki yerde).
 - Çizgi el çizimi gibi: hafif titrek, uçları incelen, tarama (hatching) ile gölge. Düz vektör "flat design" görünümü YOK.
 - Yazı tipleri: başlık `Fell` (IM Fell), metin `Garamond` (EB Garamond, italik de var). Dosyalar `/ortak/font/`. Tarayıcı motorlarında `ortak/surucu.js` bunları yükler.
-- Yazı Türkçe, kısa, büyük, okunur. Şapkalı harf (â î û) YOK. Büyük harfe `toLocaleUpperCase('tr')`.
+- Yazı Türkçe, kısa, büyük, okunur. Şapkalı harf YOK. Büyük harfe `toLocaleUpperCase('tr')`.
 - Ani parlama / flaş YOK (epilepsi riski): ışık yumuşak gelir gider, kare arası ortalama parlaklık sıçraması küçük kalır.
-- İlk kare DOLU: siyahtan ya da boş kâğıttan fade-in açılış yok; 0. karede sahnenin ana öğesi görünür (sahne 1 hariç: o boş sayfada ilk çizginin başlamasıyla açılır, 0. karede ilk çizgi zaten başlamış olsun).
+- İlk kare DOLU: siyahtan ya da boş kağıttan fade-in açılış yok; 0. karede sahnenin ana öğesi görünür (sahne 1 hariç: o boş sayfada ilk çizginin başlamasıyla açılır, 0. karede ilk çizgi zaten başlamış olsun).
 - Son ~15 kare sakin: büyük hareket bitmiş, sahne bir sonrakine sayfa çevirmeyle geçecek.
 - Determinizm: zaman yalnız kare numarasından gelir, `Math.random` yok (tohumlu sözde rastgele). İki koşu aynı kareyi vermeli.
 
@@ -23,10 +23,10 @@ Sahneler sonra sayfa çevirme geçişleriyle birleşir, üstüne kareye kilitli 
 
 ## Sahneler
 1. **Paper.js — eskiz kendini çiziyor.** Defter sayfasında ornitopterin yan görünüş eskizi kalemle çiziliyor: önce gövde ve pilot iskeleti, sonra kanat direği, kaburgalar yelpaze gibi, kanat zarı tarama ile. Kenarda Leonardo'nun ayna yazısını andıran soyut satırlar (okunur metin değil). Sonda kanat menteşesine kırmızı bir halka çizilir. Son karede eskiz tamam.
-2. **HyperFrames — bilgi ve sayaç.** Bilgi kartı: "Leonardo da Vinci" / "Uçan makine" / "1485 civarı". Ardından büyük sayaç 1485'ten 1903'e sayar, altında "ilk motorlu uçuş · Wright kardeşler" ve sonda kırmızıyla "418 yıl". Haber kurgusu gibi temiz yazı animasyonu, ama defter kâğıdı üstünde.
+2. **HyperFrames — bilgi ve sayaç.** Bilgi kartı: "Leonardo da Vinci" / "Uçan makine" / "1485 civarı". Ardından büyük sayaç 1485'ten 1903'e sayar, altında "ilk motorlu uçuş · Wright kardeşler" ve sonda kırmızıyla "418 yıl". Haber kurgusu gibi temiz yazı animasyonu, ama defter kağıdı üstünde.
 3. **Manim — formül.** Kaldırma formülü mürekkeple yazılır: L = ½ ρ v² S C_L. v² kırmızıyla vurgulanır, altında "hız 2 katı → kaldırma 4 katı" ve iki basit çubuk (1 ve 4 birim) büyür. LaTeX YOK (makinede kurulu değil): Text/MarkupText ile yaz, üst simge için Unicode ² kullan.
 4. **Matter.js — parçalar masaya dökülüyor.** Makinenin ahşap parçaları (çubuklar, kaburgalar, krank, pedal, kanat bezi parçaları) yukarıdan masaya düşer, çarpışır, yığılır. Matter fiziği hesaplar, çizim mürekkep tarzında (dolgu yerine kontur + tarama). Sabit adımlı motor, tohumlu başlangıç.
-5. **Three.js — eskizden 3D'ye ("vay" anı).** Açılışta kâğıt üstünde yan görünüş eskizi; aynı açıda 3D makine eskizin üstüne oturup yavaşça belirir ve eskiz çekilir (kâğıttan gerçeğe). Sonra kamera makinenin etrafında ~120° döner, kanatlar krankla çırpar. Model sahnenin kendi klasöründe (`ana.js`). Mürekkep/kâğıt görünümü korunur.
+5. **Three.js — eskizden 3D'ye ("vay" anı).** Açılışta kağıt üstünde yan görünüş eskizi; aynı açıda 3D makine eskizin üstüne oturup yavaşça belirir ve eskiz çekilir (kağıttan gerçeğe). Sonra kamera makinenin etrafında ~120° döner, kanatlar krankla çırpar. Model sahnenin kendi klasöründe (`ana.js`). Mürekkep/kağıt görünümü korunur.
 6. **PixiJS — kanat çırpınca toz ve ışık.** 2D makine silueti (mürekkep) kanat çırpar; her aşağı vuruşta yerden toz bulutu kalkar, kanat kenarlarında yumuşak ışık parçacıkları dağılır (additive ama yumuşak, flaş yok). Binlerce parçacık. Sonda toz yavaşça çöker.
 
 ## Teslim sözleşmesi (her sahne kendi klasöründe)

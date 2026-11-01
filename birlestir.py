@@ -55,7 +55,7 @@ for i, s in enumerate(S):
 TOPLAM = ofs + N   # son sahnede N düşülmedi
 
 def kart(satirlar, yol):
-    """Defter kâğıdı rengi küçük kart: motor adı (Fell) + ne yaptığı (Garamond italik) + isteğe bağlı yardımcı satırı."""
+    """Defter kağıdı rengi küçük kart: motor adı (Fell) + ne yaptığı (Garamond italik) + isteğe bağlı yardımcı satırı."""
     from PIL import Image, ImageDraw, ImageFont
     F = lambda d, n: ImageFont.truetype(os.path.join(KOK, "ortak/font", d), n)
     yazi = [(satirlar[0], F("IMFeENrm28P.ttf", 58), (43, 29, 18)), (satirlar[1], F("EBGaramond-Italic.ttf", 37), (90, 70, 50))]

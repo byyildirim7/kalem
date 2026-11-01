@@ -6,7 +6,7 @@ const cv = document.getElementById("c"), g = cv.getContext("2d");
 const rng = (s) => () => (s = (s * 16807) % 2147483647) / 2147483647;
 Common._seed = 4242; Math.random = rng(777);
 const R = rng(2026);
-// kâğıt (bir kez, sabit)
+// kağıt (bir kez, sabit)
 const kagit = document.createElement("canvas"); kagit.width = W; kagit.height = H;
 (function () {
   const k = kagit.getContext("2d"), r = rng(31);
