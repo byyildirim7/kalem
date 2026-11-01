@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "Fell"; src: url("assets/fonts/IMFeENrm28P.ttf"); }
+  @font-face { font-family: "Fell"; src: url("assets/fonts/EBGaramond.ttf"); unicode-range: U+0030-0039; }
+  @font-face { font-family: "Garamond"; src: url("assets/fonts/EBGaramond.ttf"); }
+  @font-face { font-family: "Garamond"; font-style: italic; src: url("assets/fonts/EBGaramond-Italic.ttf"); }
+  html, body { margin: 0; background: #E8D9B8; }
+  #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #E8D9B8; color: #2b1d12; font-family: "Garamond"; font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; }
+  .abs { position: absolute; }
+  #paper { left: 0; top: 0; width: 1920px; height: 1080px;
+    background:
+      radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(80,50,20,0.28) 100%),
+      radial-gradient(circle at 22% 30%, rgba(120,80,30,0.10) 0, rgba(0,0,0,0) 22%),
+      radial-gradient(circle at 78% 72%, rgba(120,80,30,0.12) 0, rgba(0,0,0,0) 26%); }
+  #grain { left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0.55; mix-blend-mode: multiply; }
+  .ink { white-space: nowrap; text-align: center; left: 0; width: 1920px; line-height: 1; }
+  #kart { left: 0; top: 0; width: 1920px; height: 1080px; }
+  #cerceve { left: 400px; top: 250px; width: 1120px; height: 580px; }
+  #k1 { top: 330px; font-family: "Fell"; font-size: 118px; }
+  #k2 { top: 500px; font-family: "Garamond"; font-style: italic; font-size: 76px; color: #6b5640; }
+  #k3 { top: 640px; font-family: "Fell"; font-size: 96px; }
+  #sayac { top: 250px; font-family: "Fell"; font-size: 380px; }
+  #alt { top: 600px; font-family: "Garamond"; font-style: italic; font-size: 64px; color: #6b5640; }
+  #yil { top: 730px; font-family: "Fell"; font-size: 150px; color: #b3261e; }
+  #cizgi { left: 620px; top: 905px; width: 680px; height: 14px; }
+  .ch { display: inline-block; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="8" data-fps="30" data-width="1920" data-height="1080">
+  <div id="paper" class="abs"></div>
+  <svg id="grain" class="abs" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
+    <filter id="n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9 0.35" numOctaves="3" seed="7"/><feColorMatrix values="0 0 0 0 0.45  0 0 0 0 0.32  0 0 0 0 0.16  0 0 0 0.35 0"/></filter>
+    <rect width="1920" height="1080" filter="url(#n)"/>
+  </svg>
+
+  <div id="kart" class="abs">
+    <svg id="cerceve" class="abs" viewBox="0 0 1120 580" preserveAspectRatio="none" fill="none" stroke="#2b1d12" stroke-linecap="round">
+      <path id="c1" d="M8 12 L380 8 L740 13 L1111 9" stroke-width="3.5"/>
+      <path id="c2" d="M1111 9 L1114 200 L1109 400 L1113 570" stroke-width="3"/>
+      <path id="c3" d="M1113 570 L760 575 L390 569 L10 574" stroke-width="3.5"/>
+      <path id="c4" d="M10 574 L6 380 L11 190 L8 12" stroke-width="3"/>
+      <path id="c5" d="M24 26 L1100 24 M26 556 L1098 559" stroke="#6b5640" stroke-width="1.6"/>
+    </svg>
+    <div id="k1" class="abs ink"></div>
+    <div id="k2" class="abs ink"></div>
+    <div id="k3" class="abs ink"></div>
+  </div>
+
+  <div id="sayac" class="abs ink">1485</div>
+  <div id="alt" class="abs ink"></div>
+  <div id="yil" class="abs ink">418 YIL</div>
+  <svg id="cizgi" class="abs" viewBox="0 0 680 14" fill="none"><path id="cz" d="M4 8 C120 3 260 11 380 6 S600 4 676 7" stroke="#b3261e" stroke-width="5" stroke-linecap="round"/></svg>
+</div>
+<script src="lib/gsap.min.js"></script>
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var tl = gsap.timeline({ paused: true });
+  function harfler(el, metin) {
+    el.innerHTML = ""; var out = [];
+    metin.split("").forEach(function (c) { var s = document.createElement("span"); s.className = "ch"; s.innerHTML = c === " " ? "&nbsp;" : c; el.appendChild(s); out.push(s); });
+    return out;
+  }
+  var h1 = harfler($("#k1"), "Leonardo da Vinci");
+  var h2 = harfler($("#k2"), "Uçan makine");
+  var h3 = harfler($("#k3"), "1485 civarı");
+  harfler($("#alt"), "ilk motorlu uçuş · Wright kardeşler");
+  var altH = document.querySelectorAll("#alt .ch");
+
+  // cizgi uzunluklari (kalem gibi cizilsin)
+  ["c1","c2","c3","c4","c5","cz"].forEach(function (id) { var p = $("#" + id); var L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; p._L = L; });
+
+  // 0. kare dolu: kart ve yazilar gorunur, cerceve zaten cizili
+  gsap.set(["#c1","#c2","#c3","#c4","#c5"], { strokeDashoffset: 0 });
+  gsap.set(["#sayac","#alt","#yil","#cizgi"], { opacity: 0 });
+  tl.fromTo("#kart", { scale: 0.985 }, { scale: 1, duration: 1.2, ease: "power2.out" }, 0);
+  tl.fromTo([h1, h2, h3], { y: 10 }, { y: 0, duration: 0.7, ease: "power2.out", stagger: 0.004 }, 0);
+
+  // kart cikis (2.0 - 2.5)
+  tl.to("#kart", { opacity: 0, y: -60, duration: 0.5, ease: "power2.in" }, 2.0);
+
+  // sayac giris (2.4)
+  tl.fromTo("#sayac", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, 2.4);
+  var S = { k: 1485 };
+  var SB = 2.9, SS = 3.0;   // sayim baslangic, sure
+  tl.fromTo(S, { k: 1485 }, { k: 1903, duration: SS, ease: "power2.inOut", immediateRender: false,
+    onUpdate: function () { $("#sayac").textContent = String(Math.round(S.k)); } }, SB);
+  tl.to("#sayac", { y: -20, duration: 0.5, ease: "power2.inOut" }, SB + SS + 0.1);
+
+  // alt yazi (harf harf)
+  tl.fromTo("#alt", { opacity: 0 }, { opacity: 1, duration: 0.01, immediateRender: false }, 6.0);
+  tl.fromTo(altH, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.25, ease: "power2.out", stagger: 0.022, immediateRender: false }, 6.0);
+  // 418 yil
+  tl.fromTo("#yil", { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out", immediateRender: false }, 6.35);
+  tl.set("#cizgi", { opacity: 1 }, 6.7);
+  tl.fromTo("#cz", { strokeDashoffset: $("#cz")._L }, { strokeDashoffset: 0, duration: 0.45, ease: "power1.out", immediateRender: false }, 6.7);
+
+  window.__timelines = window.__timelines || {};
+  window.__timelines["main"] = tl;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+node_modules
+.venv*/
+.DS_Store
+*.log
+__pycache__/
+# ara çıktılar (birlestir.py ve motorlar yeniden üretir)
+_is/
+.hyperframes/
+renders/
+k/
+**/lib/gsap.min.js
+ornek/*/cikti.mp4
+ornek/*/sahneler/*/video.mp4
+projeler/*
+!projeler/.gitkeep

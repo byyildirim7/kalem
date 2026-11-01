@@ -1,0 +1,144 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#E8D9B8">
+<script>addEventListener("error",e=>fetch("/log",{method:"POST",body:"ERR "+e.message+" "+e.filename+":"+e.lineno}));addEventListener("unhandledrejection",e=>fetch("/log",{method:"POST",body:"REJ "+(e.reason&&e.reason.stack||e.reason)}));</script>
+<script type="importmap">{"imports":{"pixi.js":"/motorlar/pixijs/node_modules/pixi.js/dist/pixi.min.mjs"}}</script>
+<script type="module">
+// Sahne 6: kanat cirpinca toz ve isik. PixiJS v8: ParticleContainer (binlerce parcacik), additive blend, tohumlu analitik parcacik konumu.
+import { Application, Container, Graphics, Sprite, Texture, ParticleContainer, Particle } from "pixi.js";
+import { surucu } from "/ortak/surucu.js";
+const W = 1920, H = 1080, KARE = 240;
+const rnd = (i, j = 0) => { let t = (Math.imul(i, 374761393) + Math.imul(j, 668265263) + 1013904223) | 0; t = Math.imul(t ^ (t >>> 13), 1274126177); t ^= t >>> 16; t = Math.imul(t, 2246822507); t ^= t >>> 13; return (t >>> 0) / 4294967296; };
+const sm = (x) => { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const INK = 0x2b1d12, SOLUK = 0x6b5640, KIRMIZI = 0xb3261e;
+// ---- zaman: tum degerler kare numarasindan
+const P = 36, NFLAP = 6, HX = 960, HY = 470, GY = 905, L = 560;
+const amp = (f) => 1 - 0.88 * sm((f - 175) / 55);               // son kareler sakin
+const ph = (f) => Math.cos(2 * Math.PI * f / P);                // +1 kanat yukarda, -1 asagida
+const teta = (f) => (0.12 + 0.50 * amp(f) * ph(f)) ;            // radyan, + yukari
+// kanat noktasi: u in [0,1] kiris boyunca, yan: -1 sol, +1 sag, d: arka kenara kayma
+const kanatNokta = (f, u, yan, d = 0) => {
+  const th = teta(f), vel = (teta(f + 1) - teta(f - 1)) / 2;
+  const bend = -vel * 3.5 * u * u;                                   // ucu geride kalir (esneme)
+  const a = th + bend;
+  const r = L * u, curve = -0.05 * L * u * (1 - u);
+  const lx = r, ly = curve - d * (1 + 0.5 * u) * 60 * (0.6 + 0.4 * (1 - u)) * 0 ;
+  const x = lx * Math.cos(a) , y = -(lx * Math.sin(a)) + curve * Math.cos(a) + d * 120 * (1 - 0.5 * u);
+  return [HX + yan * x, HY + y];
+};
+// ---- olaylar
+const olaylar = [];
+for (let k = 0; k < NFLAP; k++) {
+  olaylar.push({ kare: k * P + 9, tur: "kanat", guc: +(0.85 - 0.04 * k).toFixed(2) });
+  olaylar.push({ kare: k * P + 12, tur: "hisirti", guc: +(0.7 - 0.05 * k).toFixed(2) });
+  olaylar.push({ kare: k * P + 8, tur: "parilti", guc: +(0.5 - 0.03 * k).toFixed(2) });
+}
+olaylar.sort((a, b) => a.kare - b.kare);
+// ---- parcacik havuzu
+const DUST = 700, LIGHT = 450;
+const dot = () => { const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d"); const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, "rgba(255,255,255,1)"); r.addColorStop(0.35, "rgba(255,255,255,0.45)"); r.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = r; g.fillRect(0, 0, 64, 64); return Texture.from(c); };
+function kagit() {
+  const c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d");
+  g.fillStyle = "#E8D9B8"; g.fillRect(0, 0, W, H);
+  for (let i = 0; i < 260; i++) { const x = rnd(i, 1) * W, y = rnd(i, 2) * H, r = 60 + rnd(i, 3) * 260; const gr = g.createRadialGradient(x, y, 0, x, y, r); const dark = rnd(i, 4) < 0.6; gr.addColorStop(0, dark ? `rgba(150,115,60,${0.02 + rnd(i, 5) * 0.025})` : `rgba(255,245,220,${0.04 + rnd(i, 5) * 0.05})`); gr.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = gr; g.fillRect(x - r, y - r, 2 * r, 2 * r); }
+  for (let i = 0; i < 5200; i++) { const x = rnd(i, 11) * W, y = rnd(i, 12) * H, l = 2 + rnd(i, 13) * 9, an = rnd(i, 14) * 6.283; g.strokeStyle = `rgba(90,62,30,${0.03 + rnd(i, 15) * 0.07})`; g.lineWidth = 1; g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(an) * l, y + Math.sin(an) * l); g.stroke(); }
+  for (let i = 0; i < 70; i++) { const x = rnd(i, 21) * W, y = rnd(i, 22) * H; g.fillStyle = `rgba(110,75,35,${0.1 + rnd(i, 23) * 0.15})`; g.beginPath(); g.arc(x, y, 1 + rnd(i, 24) * 2.2, 0, 6.283); g.fill(); }
+  const v = g.createRadialGradient(W / 2, H / 2, H * 0.45, W / 2, H / 2, H * 1.0); v.addColorStop(0, "rgba(70,40,10,0)"); v.addColorStop(1, "rgba(70,40,10,0.42)"); g.fillStyle = v; g.fillRect(0, 0, W, H);
+  return Texture.from(c);
+}
+let app, dustP = [], lightP = [], gMak, gZem, glowL, glowR, ring, dustC, lightC;
+const wob = (i, a = 1) => (rnd(i, 77) - 0.5) * 2 * a;
+function cizgi(g, pts, w, col, al = 1) { if (pts.length < 2) return; g.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) g.lineTo(pts[i][0], pts[i][1]); g.stroke({ width: w, color: col, alpha: al, cap: "round", join: "round" }); }
+async function kur() {
+  app = new Application();
+  await app.init({ width: W, height: H, background: 0xE8D9B8, antialias: true, preserveDrawingBuffer: true, resolution: 1, autoDensity: false, autoStart: false, sharedTicker: false });
+  app.ticker.stop(); document.body.appendChild(app.canvas);
+  const bg = new Sprite(kagit()); app.stage.addChild(bg);
+  const tex = dot();
+  const mk = (n, blend) => { const c = new ParticleContainer({ texture: tex, dynamicProperties: { position: true, vertex: true, color: true } }); const a = []; for (let i = 0; i < n; i++) { const p = new Particle({ texture: tex, x: -999, y: -999, anchorX: 0.5, anchorY: 0.5, alpha: 0 }); c.addParticle(p); a.push(p); } c.blendMode = blend; return [c, a]; };
+  [dustC, dustP] = mk(NFLAP * DUST, "normal"); [lightC, lightP] = mk(NFLAP * LIGHT, "add");
+  gZem = new Graphics(); gMak = new Graphics(); ring = new Graphics();
+  glowL = new Sprite(tex); glowR = new Sprite(tex); for (const s of [glowL, glowR]) { s.anchor.set(0.5); s.blendMode = "add"; s.tint = 0xc89a40; }
+  app.stage.addChild(gZem, dustC, gMak, glowL, glowR, lightC, ring);
+  // zemin cizgisi + tarama (sabit)
+  const z = gZem; const pts = []; for (let x = 0; x <= W; x += 24) pts.push([x, GY + wob(x, 2.2) + Math.sin(x * 0.01) * 1.5]); cizgi(z, pts, 3, INK, 0.9);
+  const p2 = []; for (let x = 120; x <= W - 120; x += 30) p2.push([x, GY + 14 + wob(x + 5, 2)]); cizgi(z, p2, 1.5, SOLUK, 0.5);
+  for (let x = 60; x < W - 60; x += 17) { const l = 14 + rnd(x, 3) * 30; z.moveTo(x, GY + 8 + rnd(x, 4) * 6).lineTo(x - 10, GY + 8 + l); z.stroke({ width: 1.4, color: SOLUK, alpha: 0.35 + 0.25 * rnd(x, 5), cap: "round" }); }
+  console.log("hazir");
+  fetch("/log", { method: "POST", body: "OLAYJSON " + JSON.stringify(olaylar) });
+}
+function makine(f) {
+  const g = gMak; g.clear();
+  // gövde: tekne / pilot kabini (önden görünüş)
+  const govde = []; for (let i = 0; i <= 24; i++) { const t = i / 24 * Math.PI; govde.push([HX + Math.cos(t) * 62 + wob(i + 100, 1.2), HY + 40 + Math.sin(t) * 150 + wob(i + 130, 1.2)]); }
+  g.poly(govde.flat()).fill({ color: 0xE8D9B8, alpha: 0.85 }); cizgi(g, govde.concat([govde[0]]), 4.5, INK);
+  for (let i = -3; i <= 3; i++) cizgi(g, [[HX + i * 16, HY + 80 + Math.abs(i) * 4], [HX + i * 18 + 6, HY + 170 - Math.abs(i) * 6]], 1.4, SOLUK, 0.6);
+  // pilot: baş + omuz + kollar (krank kolları)
+  g.circle(HX, HY + 62, 20).fill({ color: 0xE8D9B8 }); g.circle(HX, HY + 62, 20).stroke({ width: 3.5, color: INK });
+  cizgi(g, [[HX - 46, HY + 100], [HX, HY + 90], [HX + 46, HY + 100]], 4, INK);
+  const el = Math.sin(2 * Math.PI * f / P) * 14 * amp(f);
+  cizgi(g, [[HX - 46, HY + 100], [HX - 74, HY + 124 + el], [HX - 40, HY + 150 + el]], 3, INK); cizgi(g, [[HX + 46, HY + 100], [HX + 74, HY + 124 - el], [HX + 40, HY + 150 - el]], 3, INK);
+  // iskeleler (landing)
+  cizgi(g, [[HX - 40, HY + 175], [HX - 110, GY - 6]], 4, INK); cizgi(g, [[HX + 40, HY + 175], [HX + 110, GY - 6]], 4, INK);
+  cizgi(g, [[HX - 150, GY - 4], [HX + 150, GY - 4]], 4.5, INK);
+  cizgi(g, [[HX - 60, HY + 195], [HX + 60, HY + 195]], 3, SOLUK, 0.8);
+  // kanatlar
+  for (const yan of [-1, 1]) {
+    const N = 22, ust = [], alt = [];
+    for (let i = 0; i <= N; i++) { const u = i / N; ust.push(kanatNokta(f, u, yan, 0)); alt.push(kanatNokta(f, u, yan, 0.55 * Math.sin(Math.PI * Math.min(1, u * 1.1 + 0.04)) + 0.05)); }
+    const zar = ust.concat(alt.slice().reverse());
+    g.poly(zar.flat()).fill({ color: 0xd9c48f, alpha: 0.55 });
+    for (let i = 1; i <= N; i++) { const a = ust[i], b = alt[i]; g.moveTo(a[0], a[1]).lineTo(b[0], b[1]); g.stroke({ width: i % 3 === 0 ? 2.4 : 1.2, color: i % 3 === 0 ? INK : SOLUK, alpha: i % 3 === 0 ? 0.9 : 0.55, cap: "round" }); }
+    // tarama (hatching) zar uzerinde
+    for (let i = 1; i < N; i += 1) { const a = ust[i], b = alt[i], c = alt[Math.min(N, i + 1)]; const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; g.moveTo(m[0], m[1]).lineTo((b[0] + c[0]) / 2, (b[1] + c[1]) / 2); g.stroke({ width: 1, color: SOLUK, alpha: 0.4 }); }
+    cizgi(g, alt, 2.6, INK, 0.9);
+    cizgi(g, ust.map((p, i) => [p[0] + wob(i + (yan > 0 ? 300 : 400), 0.8), p[1] + wob(i + 500, 0.8)]), 5.5, INK);
+  }
+  // menteşe halkası kırmızı
+  ring.clear(); ring.circle(HX, HY, 30).stroke({ width: 4, color: KIRMIZI, alpha: 0.9 }); ring.circle(HX, HY, 8).fill({ color: KIRMIZI, alpha: 0.9 });
+}
+function parcacik(f) {
+  const kapa = (p) => { p.alpha = 0; p.x = -999; p.y = -999; };
+  for (let k = 0; k < NFLAP; k++) {
+    // toz
+    for (let i = 0; i < DUST; i++) {
+      const p = dustP[k * DUST + i], id = k * 10007 + i;
+      const te = k * P + 8 + rnd(id, 1) * 14, a = f - te, life = 62 + rnd(id, 2) * 38;
+      if (a < 0 || a > life) { kapa(p); continue; }
+      const yan = rnd(id, 3) < 0.5 ? -1 : 1, mesafe = 90 + Math.pow(rnd(id, 4), 0.8) * 640;
+      const x0 = HX + yan * mesafe, y0 = GY + 4 + rnd(id, 5) * 36;
+      const d = 0.05 + 0.04 * rnd(id, 6), vx = yan * (0.8 + 4.5 * rnd(id, 7)) * (0.5 + mesafe / 700), vy = -(3.5 + 9 * rnd(id, 8)) * (0.7 + 0.5 * amp(te)), gr = 0.006 + 0.01 * rnd(id, 9);
+      const e = (1 - Math.exp(-d * a)) / d;
+      p.x = x0 + vx * e + Math.sin(a * 0.08 + rnd(id, 10) * 6) * 6; p.y = Math.min(GY + 30, y0 + vy * e + gr * a * a * 0.5);
+      const sz = (50 + 110 * rnd(id, 11)) / 64 * (0.6 + 0.9 * sm(a / 40)); p.scaleX = p.scaleY = sz;
+      const k0 = Math.pow(1 - k / (NFLAP + 2), 0.5);
+      p.alpha = 0.10 * k0 * sm(a / 7) * (1 - sm((a - life * 0.35) / (life * 0.65)));
+      p.tint = rnd(id, 12) < 0.5 ? SOLUK : 0x8a6f4c;
+    }
+    // isik
+    for (let i = 0; i < LIGHT; i++) {
+      const p = lightP[k * LIGHT + i], id = k * 20011 + i + 5;
+      const te = k * P + 4 + rnd(id, 1) * 14, a = f - te, life = 36 + rnd(id, 2) * 30;
+      if (a < 0 || a > life) { kapa(p); continue; }
+      const yan = rnd(id, 3) < 0.5 ? -1 : 1, u = 0.3 + 0.7 * rnd(id, 4), ed = rnd(id, 5) < 0.5 ? 0 : 0.5;
+      const [bx, by] = kanatNokta(te, u, yan, ed * Math.sin(Math.PI * Math.min(1, u * 1.1 + 0.04)));
+      const ang = rnd(id, 6) * 6.283, sp = 0.4 + 2.2 * rnd(id, 7), d = 0.04;
+      const e = (1 - Math.exp(-d * a)) / d;
+      p.x = bx + Math.cos(ang) * sp * e + yan * 0.5 * a; p.y = by + Math.sin(ang) * sp * e - 0.25 * a + Math.sin(a * 0.1 + id) * 3;
+      p.scaleX = p.scaleY = (6 + 22 * rnd(id, 8)) / 64 * (1 - 0.4 * a / life);
+      p.alpha = 0.34 * (0.6 - 0.04 * k) * sm(a / 8) * (1 - sm((a - life * 0.3) / (life * 0.7)));
+      p.tint = rnd(id, 9) < 0.7 ? 0xd8a64a : 0xe2c27a;
+    }
+  }
+  // yumuşak ışık lekesi: kanat ucunda, aşağı vuruş hızıyla
+  const hiz = Math.max(0, -(teta(f + 1) - teta(f - 1)) / 2) * 60;
+  const gl = (s, yan) => { const [x, y] = kanatNokta(f, 0.92, yan, 0.1); s.x = x; s.y = y; s.scale.set(5.2); s.alpha = Math.min(0.22, hiz * 0.33) * (0.5 + 0.5 * amp(f)); };
+  gl(glowL, -1); gl(glowR, 1);
+}
+let tamam = -1;
+async function kare(f) {
+  makine(f); parcacik(f);
+  app.renderer.render(app.stage);
+  return app.canvas;
+}
+surucu(kur, kare, KARE);
+</script>

@@ -1,0 +1,74 @@
+{
+  "fps": 30,
+  "genislik": 1920,
+  "yukseklik": 1080,
+  "gecis_kare": 15,
+  "sahneler": [
+    {
+      "no": 1,
+      "klasor": "01-paperjs",
+      "motor": "Paper.js",
+      "kare": 240,
+      "etiket": [
+        "Paper.js",
+        "kendi kendine çizilen kalem çizgisi"
+      ]
+    },
+    {
+      "no": 2,
+      "klasor": "02-hyperframes",
+      "motor": "HyperFrames",
+      "kare": 240,
+      "etiket": [
+        "HyperFrames",
+        "yazı, sayaç ve bilgi kartı",
+        "zamanlama: GSAP"
+      ]
+    },
+    {
+      "no": 3,
+      "klasor": "03-manim",
+      "motor": "Manim",
+      "kare": 240,
+      "etiket": [
+        "Manim",
+        "formül ve şema"
+      ]
+    },
+    {
+      "no": 4,
+      "klasor": "04-matter",
+      "motor": "Matter.js",
+      "kare": 240,
+      "etiket": [
+        "Matter.js",
+        "düşen, çarpışan parçaların fiziği",
+        "ses: Tone.js, her çarpma kendi karesinde"
+      ]
+    },
+    {
+      "no": 5,
+      "klasor": "05-threejs",
+      "motor": "Three.js",
+      "kare": 300,
+      "etiket": [
+        "Three.js",
+        "gerçek 3D: kamera, ışık, gölge"
+      ]
+    },
+    {
+      "no": 6,
+      "klasor": "06-pixijs",
+      "motor": "PixiJS",
+      "kare": 240,
+      "etiket": [
+        "PixiJS",
+        "toz ve ışık: 6.900 parçacık"
+      ]
+    }
+  ],
+  "gecis_etiketi": [
+    "gl-transitions",
+    "sayfa çevirme geçişi"
+  ]
+}

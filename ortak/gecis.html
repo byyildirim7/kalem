@@ -1,0 +1,42 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#000">
+<script type="module">
+// İki sahne arası gl-transitions geçişi. ?k=<klasör>&ad=<geçiş adı>&n=<kare>&w=&h=
+// <klasör>/a/0000.png.. (A'nın son n karesi) ve <klasör>/b/0000.png.. (B'nin ilk n karesi) okunur.
+import { surucu } from "/ortak/surucu.js";
+const q = new URLSearchParams(location.search), K = q.get("k"), AD = q.get("ad") || "BookFlip", N = +q.get("n"), W = +q.get("w") || 1920, H = +q.get("h") || 1080;
+const cv = Object.assign(document.createElement("canvas"), { width: W, height: H });
+const g = cv.getContext("webgl", { preserveDrawingBuffer: true, antialias: false });
+const resim = (y) => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = y; });
+let pr, t0, t1, A = [], B = [];
+const yum = (x) => x * x * (3 - 2 * x);
+async function kur() {
+  const tr = (await (await fetch("/motorlar/yardimci/node_modules/gl-transitions/gl-transitions.json")).json()).find((t) => t.name === AD);
+  if (!tr) throw new Error("geçiş yok: " + AD);
+  const par = Object.entries(tr.paramsTypes || {}).map(([k, t]) => `uniform ${t} ${k};`).join("\n");
+  const fs = `precision highp float; varying vec2 _uv; uniform sampler2D from, to; uniform float progress, ratio; ${par}
+vec4 getFromColor(vec2 uv){ return texture2D(from, uv); } vec4 getToColor(vec2 uv){ return texture2D(to, uv); }
+${tr.glsl}
+void main(){ gl_FragColor = transition(_uv); }`;
+  const VS = "attribute vec2 p; varying vec2 _uv; void main(){ _uv = p*0.5+0.5; gl_Position = vec4(p,0.,1.); }";
+  const mk = (t, s) => { const sh = g.createShader(t); g.shaderSource(sh, s); g.compileShader(sh); if (!g.getShaderParameter(sh, g.COMPILE_STATUS)) throw new Error(g.getShaderInfoLog(sh)); return sh; };
+  pr = g.createProgram(); g.attachShader(pr, mk(g.VERTEX_SHADER, VS)); g.attachShader(pr, mk(g.FRAGMENT_SHADER, fs)); g.linkProgram(pr); g.useProgram(pr);
+  for (const [k, v] of Object.entries(tr.defaultParams || {})) {
+    const u = g.getUniformLocation(pr, k), t = tr.paramsTypes[k];
+    if (t === "float") g.uniform1f(u, v); else if (t === "int" || t === "bool") g.uniform1i(u, +v);
+    else if (t === "vec2") g.uniform2fv(u, v); else if (t === "vec3") g.uniform3fv(u, v); else if (t === "vec4") g.uniform4fv(u, v);
+  }
+  g.bindBuffer(g.ARRAY_BUFFER, g.createBuffer()); g.bufferData(g.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), g.STATIC_DRAW);
+  const loc = g.getAttribLocation(pr, "p"); g.enableVertexAttribArray(loc); g.vertexAttribPointer(loc, 2, g.FLOAT, false, 0, 0);
+  const tex = () => { const t = g.createTexture(); g.bindTexture(g.TEXTURE_2D, t); for (const [k, v] of [[g.TEXTURE_MIN_FILTER, g.LINEAR], [g.TEXTURE_MAG_FILTER, g.LINEAR], [g.TEXTURE_WRAP_S, g.CLAMP_TO_EDGE], [g.TEXTURE_WRAP_T, g.CLAMP_TO_EDGE]]) g.texParameteri(g.TEXTURE_2D, k, v); return t; };
+  t0 = tex(); t1 = tex(); g.pixelStorei(g.UNPACK_FLIP_Y_WEBGL, true); g.viewport(0, 0, W, H);
+  const ad = (i) => String(i).padStart(4, "0") + ".png";
+  for (let i = 0; i < N; i++) { A.push(await resim(`/${K}/a/${ad(i)}`)); B.push(await resim(`/${K}/b/${ad(i)}`)); }
+}
+async function kare(f) {
+  g.activeTexture(g.TEXTURE0); g.bindTexture(g.TEXTURE_2D, t0); g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, g.RGBA, g.UNSIGNED_BYTE, A[f]); g.uniform1i(g.getUniformLocation(pr, "from"), 0);
+  g.activeTexture(g.TEXTURE1); g.bindTexture(g.TEXTURE_2D, t1); g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, g.RGBA, g.UNSIGNED_BYTE, B[f]); g.uniform1i(g.getUniformLocation(pr, "to"), 1);
+  g.uniform1f(g.getUniformLocation(pr, "progress"), yum((f + 1) / (N + 1))); g.uniform1f(g.getUniformLocation(pr, "ratio"), W / H);
+  g.drawArrays(g.TRIANGLE_STRIP, 0, 4); return cv;
+}
+surucu(kur, kare, N);
+</script>

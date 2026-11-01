@@ -1,0 +1,1 @@
+{ "name": "vm-ses", "private": true, "type": "module", "dependencies": { "puppeteer-core": "^25.16.0", "tone": "^15.1.22" } }

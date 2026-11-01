@@ -1,0 +1,32 @@
+[
+ {
+  "kare": 12,
+  "tur": "hisirti",
+  "guc": 0.55
+ },
+ {
+  "kare": 128,
+  "tur": "kanat",
+  "guc": 0.95
+ },
+ {
+  "kare": 160,
+  "tur": "kanat",
+  "guc": 0.95
+ },
+ {
+  "kare": 192,
+  "tur": "kanat",
+  "guc": 0.95
+ },
+ {
+  "kare": 224,
+  "tur": "kanat",
+  "guc": 0.95
+ },
+ {
+  "kare": 256,
+  "tur": "kanat",
+  "guc": 0.73
+ }
+]

@@ -1,0 +1,62 @@
+[
+ {
+  "kare": 0,
+  "tur": "cizgi",
+  "guc": 0.5
+ },
+ {
+  "kare": 0,
+  "tur": "tik",
+  "guc": 0.45
+ },
+ {
+  "kare": 12,
+  "tur": "tik",
+  "guc": 0.45
+ },
+ {
+  "kare": 24,
+  "tur": "tik",
+  "guc": 0.45
+ },
+ {
+  "kare": 36,
+  "tur": "tik",
+  "guc": 0.45
+ },
+ {
+  "kare": 48,
+  "tur": "tik",
+  "guc": 0.45
+ },
+ {
+  "kare": 68,
+  "tur": "vurus",
+  "guc": 0.8
+ },
+ {
+  "kare": 82,
+  "tur": "cizgi",
+  "guc": 0.4
+ },
+ {
+  "kare": 100,
+  "tur": "cizgi",
+  "guc": 0.5
+ },
+ {
+  "kare": 112,
+  "tur": "hisirti",
+  "guc": 0.4
+ },
+ {
+  "kare": 142,
+  "tur": "tik",
+  "guc": 0.4
+ },
+ {
+  "kare": 172,
+  "tur": "vurus",
+  "guc": 0.9
+ }
+]
