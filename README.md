@@ -1,3 +1,5 @@
+<p align="center"><img src=".github/logo.png" width="200" alt="Kalem logosu"></p>
+
 # Kalem
 
 **Türkçe** | [English](README.en.md)
