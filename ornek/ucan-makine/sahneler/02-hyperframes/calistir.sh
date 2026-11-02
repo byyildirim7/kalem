@@ -4,6 +4,7 @@ set -e
 AD="$(cd "$(dirname "$0")" && pwd)"
 M="$AD/../../../../motorlar/hyperframes"   # paket kökündeki motor (kurulum.sh kurar)
 BIN="$M/node_modules/.bin"
+mkdir -p "$AD/proje/lib"
 cp "$M/node_modules/gsap/dist/gsap.min.js" "$AD/proje/lib/" 2>/dev/null || cp "$M/lib/gsap.min.js" "$AD/proje/lib/"
 python3 "$AD/olay.py"
 cd "$AD/proje"; mkdir -p renders; rm -f renders/*.mp4
