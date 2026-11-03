@@ -1,0 +1,12 @@
+cikti/
+__pycache__/
+*.log
+# her çalıştırmada yeniden üretilenler
+*/iskelet.png
+*/iskelet-govde.png
+*/geometri.json
+*/ISTEK*.md
+*/bitti*.txt
+*/blueprint/
+levhalar/*
+!levhalar/iskelet-yolu.json

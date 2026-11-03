@@ -6,6 +6,14 @@
 
 > Her sahnenin kendi kalemi var.
 
+## Yeni: levha motoru
+
+Kodla tasarlanan bir makineyi (kaldıraç, palanga, krank-piston, dişli zinciri) Leonardo defteri levhası gibi çizer, kalemle oluşturur, parçalarını eklemlerinde çalıştırır ve ders anlatan bir videoya çevirir. Mavi teknik çizim tarzı Codex'siz, tamamen kodla çalışır.
+
+![Levha motoru demosu](motorlar/levha/demo.gif)
+
+Ayrıntı ve tek komut: [motorlar/levha](motorlar/levha/README.md)
+
 Yapay zekaya kodla video yaptırınca hepsi birbirine benziyor, çünkü bütün sahneleri tek bir motorla çiziyor. **Kalem**, Claude Code için yazılmış bir skill. Videoyu sahnelere böler, her sahnenin içinde ne olduğuna bakar ve onu en iyi çizen motoru seçer. Sonra sahneleri o motorlarla üretir, sayfa çevirme gibi geçişlerle birleştirir ve görüntüye kare kare oturan efekt sesini ekler.
 
 Sen yalnızca ne istediğini anlatırsın. Hangi sahnenin hangi kalemle çizileceğine skill karar verir.
@@ -22,6 +30,7 @@ Sen yalnızca ne istediğini anlatırsın. Hangi sahnenin hangi kalemle çizilec
 | Yazı, sayı, sayaç, bilgi kartı | HyperFrames (HTML + GSAP) |
 | Gerçek 3D: dönen kamera, ışık, gölge | Three.js |
 | Formül, grafik, şema | Manim |
+| Çalışan makine, defter levhası, ders anlatımı | Levha (`motorlar/levha`) |
 
 Yardımcılar: Matter.js ve Rapier (fizik), gl-transitions (125 geçiş, sayfa çevirme dahil), Tone.js (kareye kilitli efekt sesi), Anime.js, tsParticles, glTF-Transform.
 

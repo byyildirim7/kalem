@@ -19,6 +19,7 @@ Tek bir motorla yapılan videolar birbirine benzer. Bu skill videoyu sahnelere b
 | Ekrana yazı, sayı, sayaç, bilgi kartı, haber kurgusu | **HyperFrames** (HTML + GSAP) | Yazı ve bilgi animasyonunda en temizi. |
 | Gerçek 3D: kamera dönüyor, ışık, gölge, makine | **Three.js** | Tarayıcıda gerçek 3D. |
 | Formül, grafik, şema, matematik | **Manim** (Python) | 3Blue1Brown'un aracı. LaTeX yoksa Text ile yaz. |
+| Çalışan bir makine (kaldıraç, palanga, krank-piston, dişli zinciri) defter levhası gibi çizilip ders anlatacak | **Levha** (`motorlar/levha`, Python) | Kodla tasarlanan makineyi kalemle çizer, parçalarını eklemlerinde çalıştırır, ölçüleri denetler. `python3 motorlar/levha/yeni_levha.py <makine>`; ayrıntı motorun README'sinde. |
 
 Yardımcılar sahne çizmez, bir motorun içinde ona yardım eder:
 

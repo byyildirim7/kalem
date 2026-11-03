@@ -13,3 +13,6 @@ ornek/*/cikti.mp4
 ornek/*/sahneler/*/video.mp4
 projeler/*
 !projeler/.gitkeep
+
+# yerel deneme klasörü (yayına girmez)
+motorlar/levha-deneme/

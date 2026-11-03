@@ -6,6 +6,14 @@
 
 > Every scene has its own pen.
 
+## New: plate engine (levha)
+
+Takes a machine designed in code (lever, pulley system, crank-piston, gear train), draws it like a Leonardo notebook plate, builds it stroke by stroke, runs its parts on their joints and turns it into a teaching video. The blue technical-drawing style needs no Codex and runs entirely in code.
+
+![Plate engine demo](motorlar/levha/demo.gif)
+
+Details and the one command: [motorlar/levha](motorlar/levha/README.en.md)
+
 When you ask an AI to make a video with code, the results all look alike, because every scene is drawn with the same engine. **Kalem** ("pen" in Turkish) is a Claude Code skill that splits your video into scenes, looks at what happens inside each one and picks the engine that draws it best. It then renders each scene with that engine, joins them with transitions such as a page flip, and adds sound effects locked to the frame.
 
 You describe what you want. The skill decides which pen draws which scene.
@@ -22,6 +30,7 @@ You describe what you want. The skill decides which pen draws which scene.
 | Text, numbers, counters, info cards | HyperFrames (HTML + GSAP) |
 | Real 3D: orbiting camera, light, shadow | Three.js |
 | Formulas, graphs, diagrams | Manim |
+| A running machine as a notebook plate, teaching video | Levha (`motorlar/levha`) |
 
 Helpers: Matter.js and Rapier (physics), gl-transitions (125 transitions incl. page flip), Tone.js (frame-locked sound effects), Anime.js, tsParticles, glTF-Transform.
 
