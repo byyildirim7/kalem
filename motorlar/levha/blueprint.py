@@ -15,8 +15,9 @@ def _ilk_font(*yollar):
     for y in yollar:
         if os.path.exists(y): return y
     return yollar[-1]
-DAR_FONT = _ilk_font("/System/Library/Fonts/Supplemental/Arial Narrow.ttf", "/usr/share/fonts/truetype/liberation/LiberationSansNarrow-Regular.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed.ttf", "/Library/Fonts/Arial.ttf")
-DUZ_FONT = _ilk_font("/System/Library/Fonts/Helvetica.ttc", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", DAR_FONT)
+WF = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")   # Windows: Arial Narrow (Office ile gelir) yoksa Arial; ₁ ₂ için Segoe UI
+DAR_FONT = _ilk_font("/System/Library/Fonts/Supplemental/Arial Narrow.ttf", "/usr/share/fonts/truetype/liberation/LiberationSansNarrow-Regular.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed.ttf", os.path.join(WF, "ARIALN.TTF"), os.path.join(WF, "arial.ttf"), "/Library/Fonts/Arial.ttf")
+DUZ_FONT = _ilk_font("/System/Library/Fonts/Helvetica.ttc", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", os.path.join(WF, "segoeui.ttf"), DAR_FONT)
 FONT = DAR_FONT
 def tr_buyuk(s): return s.replace("i", "İ").replace("ı", "I").upper()
 

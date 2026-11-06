@@ -29,6 +29,11 @@ python3 -m pip install -r requirements.txt
 
 The Codex drawings of the bundled example machines are in their folders, so you can try it right away without Codex.
 
+**Windows:** use `python` (or the venv's `Scripts\python.exe`) instead of `python3`.
+- **Codex:** a `codex.exe` on PATH, or the CLI bundled inside the Microsoft Store Codex app, is found automatically. Otherwise set `CODEX` to its path.
+- **Parallel render:** Windows has no `fork`, so rendering uses `spawn`. The prepared state is loaded from disk once per worker; this needs `cloudpickle` (`requirements.txt` installs it on Windows only).
+- **Memory:** each worker holds about 0.75 GB at 1080p. The worker count is capped by free memory; set it by hand with `LEVHA_CEKIRDEK=8`, or use `--seri` for a single core.
+
 ## One command
 
 ```bash

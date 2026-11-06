@@ -3,9 +3,20 @@
   python3 yeni_levha.py <tasarım adı> [--codex-yok] [--stil blueprint] [--seviye 8|lise] [--varyant tork|acili|agirlik (kaldıraç) · temel|agirlikli|verim (palanga)]
 <tasarım adı>/tasarla.py makineyi tasarlar (geometri.json, iskelet.png, iskelet-govde.png, ISTEK.md, ISTEK-govde.md).
 --codex-yok: Codex atlanır, klasördeki levha.png + govde.png kullanılır. Çıktı: cikti/<ad>-v4-dur.mp4 + kontrol görüntüleri."""
-import json, os, subprocess, sys, time
+import json, os, shutil, subprocess, sys, time
+sys.stdout.reconfigure(encoding="utf-8", errors="replace"); os.environ.setdefault("PYTHONIOENCODING", "utf-8")   # Windows: cp1254 yerine UTF-8 (alt betikler de)
 D = os.path.dirname(os.path.abspath(__file__)); AD = sys.argv[1]; K = os.path.join(D, AD); SURE = {}
 def adim(ad, t0): SURE[ad] = round(time.time() - t0, 1); print(f"[{ad}] {SURE[ad]} sn", flush=True)
+def codex_bul():                                  # CODEX değişkeni > PATH'teki codex > Windows: Microsoft Store Codex uygulamasının içindeki codex.exe
+    if os.environ.get("CODEX"): return os.environ["CODEX"]
+    y = shutil.which("codex")
+    if y and (sys.platform != "win32" or y.lower().endswith(".exe")): return y
+    if sys.platform == "win32":                   # npm'in codex.cmd'si cmd.exe'den geçer, çok satırlı istemi bozabilir: önce gerçek exe aranır
+        r = subprocess.run(["powershell", "-NoProfile", "-Command", "(Get-AppxPackage -Name OpenAI.Codex).InstallLocation"], capture_output=True, text=True)
+        x = os.path.join(r.stdout.strip(), "app", "resources", "codex.exe")
+        if r.stdout.strip() and os.path.exists(x): return x
+    if y: return y
+    sys.exit("codex bulunamadı: Codex CLI'yi kur ve giriş yap, ya da CODEX değişkeniyle codex yürütülebilirinin yolunu ver")
 def codex(tur):
     ist, isk, cik, bit, log = (("ISTEK.md", "iskelet.png", "levha.png", "bitti.txt", "codex-a.log") if tur == "a" else
                               ("ISTEK-govde.md", "iskelet-govde.png", "govde.png", "bitti-govde.txt", "codex-b.log"))
@@ -13,7 +24,7 @@ def codex(tur):
              f"referans görsel olarak vererek üret. Python, PIL, SVG ya da kodla çizim YAPMA: kodla çizilen görsel gravür dokusu taşımaz, kabul edilmez. "
              f"Görsel 1536x1024 olsun, iskeletle birebir örtüşsün. Çıktıyı {cik} adıyla bu klasöre kaydet, sonra {bit} yaz.")
     # İSTEM -i'den ÖNCE (yoksa -i istemi yutar); stdin kapalı
-    return subprocess.Popen(["codex", "exec", "--skip-git-repo-check", "--sandbox", "workspace-write", "-C", K, istem, "-i", os.path.join(K, isk)],
+    return subprocess.Popen([CODEX, "exec", "--skip-git-repo-check", "--sandbox", "workspace-write", "-C", K, istem, "-i", os.path.join(K, isk)],
                             stdin=subprocess.DEVNULL, stdout=open(os.path.join(K, log), "w", encoding="utf-8"), stderr=subprocess.STDOUT), os.path.join(K, cik)
 t = time.time(); subprocess.run([sys.executable, "tasarla.py"], cwd=K, check=True); adim("tasarım", t)
 if "--stil" in sys.argv and sys.argv[sys.argv.index("--stil") + 1] == "blueprint":   # Codex'siz: görseller koddan, belirlenimci
@@ -29,6 +40,7 @@ if "--stil" in sys.argv and sys.argv[sys.argv.index("--stil") + 1] == "blueprint
     t = time.time(); subprocess.run([sys.executable, os.path.join(D, "levha.py"), yb] + EK, check=True); adim("render", t)
     print("süreler:", SURE); sys.exit(0)
 if "--codex-yok" not in sys.argv:
+    CODEX = codex_bul(); print(f"codex: {CODEX}", flush=True)
     t = time.time(); isler = [codex("a"), codex("b")]
     for p, _ in isler: p.wait()
     for _, cik in isler:

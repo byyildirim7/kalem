@@ -66,4 +66,4 @@ Bu tablo bir kişinin zevkiyle kuruldu: 20 araç aynı sahneyle yarıştırıld�
 ## Kurulum
 
 `./kurulum.sh` motorların paketlerini kurar (Node 20+, Python 3, ffmpeg, Google Chrome gerekir; Manim isteğe bağlı: `pip install manim`).
-Windows'ta betikler Git Bash ile çalışır; Chrome `C:\Program Files\Google\Chrome` ya da `%LOCALAPPDATA%` altındaysa kendiliğinden bulunur, değilse `CHROME` değişkeniyle ver.
+Windows'ta betikler Git Bash ile çalışır; Chrome `C:\Program Files\Google\Chrome` ya da `%LOCALAPPDATA%` altındaysa kendiliğinden bulunur, değilse `CHROME` değişkeniyle ver. Levha Windows'ta: `python3` yerine venv python'u; Codex (Store uygulamasının içindeki CLI dahil) kendiliğinden bulunur, değilse `CODEX`; paralel render spawn + cloudpickle ile çalışır, işçi sayısı boş belleğe göre sınırlanır (`LEVHA_CEKIRDEK`, `--seri`).

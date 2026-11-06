@@ -29,6 +29,11 @@ python3 -m pip install -r requirements.txt
 
 Hazır örnek makinelerin Codex çizimleri klasörlerinde durur, yani Codex olmadan hemen deneyebilirsin.
 
+**Windows:** `python3` yerine `python` (ya da venv'in `Scripts\python.exe`) kullan.
+- **Codex:** PATH'teki `codex.exe` ya da Microsoft Store'daki Codex uygulamasının içindeki CLI kendiliğinden bulunur. Başka bir yerdeyse `CODEX` değişkeniyle yolunu ver.
+- **Paralel render:** Windows'ta `fork` olmadığı için `spawn` ile çalışır. Hazırlanan durum her işçiye bir kez diskten yüklenir; bunun için `cloudpickle` gerekir (`requirements.txt` yalnız Windows'ta kurar).
+- **Bellek:** Her işçi 1080p'de yaklaşık 0,75 GB tutar. İşçi sayısı boş belleğe göre sınırlanır; elle vermek için `LEVHA_CEKIRDEK=8`, tek çekirdek için `--seri`.
+
 ## Tek komut
 
 ```bash

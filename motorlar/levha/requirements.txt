@@ -3,3 +3,4 @@ opencv-python
 scipy
 Pillow
 fonttools
+cloudpickle; sys_platform == "win32"   # Windows: fork yok, paralel render durumu lambdalarla birlikte spawn işçilerine taşınır

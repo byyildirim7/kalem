@@ -15,9 +15,10 @@ def _ilk_font(*yollar):
     for y in yollar:
         if os.path.exists(y): return y
     return yollar[-1]
-DAR_FONT = _ilk_font("/System/Library/Fonts/Supplemental/Arial Narrow.ttf", "/usr/share/fonts/truetype/liberation/LiberationSansNarrow-Regular.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed.ttf", "/Library/Fonts/Arial.ttf", "/System/Library/Fonts/Helvetica.ttc")
-DUZ_FONT = _ilk_font("/System/Library/Fonts/Helvetica.ttc", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", DAR_FONT)
-YEDEK = _ilk_font("/System/Library/Fonts/Supplemental/Times New Roman Italic.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Italic.ttf", DUZ_FONT)
+WF = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")   # Windows: Arial Narrow (Office ile gelir) yoksa Arial; ₁ ₂ için Segoe UI (Arial'da yok)
+DAR_FONT = _ilk_font("/System/Library/Fonts/Supplemental/Arial Narrow.ttf", "/usr/share/fonts/truetype/liberation/LiberationSansNarrow-Regular.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed.ttf", "/Library/Fonts/Arial.ttf", os.path.join(WF, "ARIALN.TTF"), os.path.join(WF, "arial.ttf"), "/System/Library/Fonts/Helvetica.ttc")
+DUZ_FONT = _ilk_font("/System/Library/Fonts/Helvetica.ttc", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", os.path.join(WF, "segoeui.ttf"), DAR_FONT)
+YEDEK = _ilk_font("/System/Library/Fonts/Supplemental/Times New Roman Italic.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Italic.ttf", os.path.join(WF, "timesi.ttf"), DUZ_FONT)
 RENK = {"r": np.array([42, 64, 164], np.float32), "c": np.array([122, 74, 47], np.float32), "o": np.array([28, 106, 154], np.float32), "s": np.array([22, 39, 58], np.float32)}
 SATIR, DURAK, CIZ = 30, 15, 15                       # kare: yazı satırı 1 sn, durak 0,5 sn, çizgi 0,5 sn
 STIL = "defter"; UC = (18, 30, 44)

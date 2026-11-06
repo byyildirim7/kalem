@@ -561,7 +561,30 @@ def parca_ciz(ara_):                             # bir çekirdeğin işi: [a, b)
         if i in KONT: kare[i] = o
     ff.stdin.close(); ff.wait(); return kare, fark, ozet
 
+def durum_yaz(yol):                              # spawn (Windows) için: ana bloğun hazırladığı veri globallerini diske yaz
+    import pickle, types, cloudpickle             # cloudpickle: anlatım öğelerindeki lambdalar (geo, capa) standart pickle'a girmez
+    durum, atla, cp = {}, [], []
+    for k, v in list(globals().items()):
+        if k.startswith("__") or isinstance(v, (types.ModuleType, types.FunctionType, type)): continue
+        if isinstance(v, np.ndarray) and v.dtype == object: atla.append(k); continue   # etiket haritası: işçide gerekmez, pickle'ı çok yavaşlatır
+        try: durum[k] = pickle.dumps(v, protocol=pickle.HIGHEST_PROTOCOL)
+        except Exception: durum[k] = cloudpickle.dumps(v, protocol=pickle.HIGHEST_PROTOCOL); cp.append(k)   # bu da olmazsa hata: eksik durumla sessizce çizmesin
+    with open(yol, "wb") as f: pickle.dump(durum, f, protocol=pickle.HIGHEST_PROTOCOL)
+    return sum(map(len, durum.values())), atla, cp
+
+def bos_bellek_gb():                             # Windows'ta kullanılabilir RAM (psutil'siz)
+    import ctypes
+    class M(ctypes.Structure): _fields_ = [("uzunluk", ctypes.c_ulong), ("yuk", ctypes.c_ulong)] + [(k, ctypes.c_ulonglong) for k in ("tf", "af", "tp", "ap", "tv", "av", "aev")]
+    m = M(); m.uzunluk = ctypes.sizeof(M); ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(m)); return m.af / 2**30
+
+def isci_kur(yol):                               # spawn işçisi modülü baştan yükler (ana blok çalışmaz); durumu diskten alır
+    import pickle
+    with open(yol, "rb") as f: globals().update({k: pickle.loads(b) for k, b in pickle.load(f).items()})
+    if T.get("ders"):                            # ders modülünün kendi durumu (blueprint renkleri, font) pickle'la gelmez: aynı stili kur
+        import ders; ders.stil_ayarla(STIL)
+
 if __name__ == "__main__":
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")   # Windows'ta varsayılan cp1254; Türkçe ilerleme satırları bozuluyordu
     os.makedirs(os.path.join(D, "cikti"), exist_ok=True); C = os.path.join(D, "cikti", AD + "-v4")
     adim("başla")
     A, DOK, arka, on = hazirla(); adim("melez katmanlar (dokular, arka plan temizliği, ön maske)")
@@ -691,11 +714,18 @@ if __name__ == "__main__":
     globals().update(dict(OL=OL, MUR=MUR, ZM=ZM, P0=P0, M0=M0, KUR=KUR, YOL=YOL, ESK=ESK, arka=arka, on=on, DOK=DOK, kag=kag, YOLK=YOLK, HARF=HARF, FOL=FOL,
                           KONT={15, 60, 150, 240, 300, 360, 429, OL + 120, OL + 280, OL + 400, N - 1} | {OL + k for k in T.get("kontrol_kareleri", []) + T.get("yakin_kareler", []) if OL + k < N}))
     import multiprocessing as mp, tempfile, shutil
-    CEK = 1 if "--seri" in sys.argv else max(1, (os.cpu_count() or 2) - 1); ISK = tempfile.mkdtemp(prefix="levha-"); sinir = np.linspace(0, N, CEK + 1).astype(int)
+    CEK = 1 if "--seri" in sys.argv else int(os.environ.get("LEVHA_CEKIRDEK") or max(1, (os.cpu_count() or 2) - 1))
+    if CEK > 1 and "fork" not in mp.get_all_start_methods() and not os.environ.get("LEVHA_CEKIRDEK"):
+        CEK = min(CEK, max(1, int(bos_bellek_gb() / .9)))   # spawn: her işçi durumun tam kopyasını taşır (1080p'de ~0,75 GB)
+    ISK = tempfile.mkdtemp(prefix="levha-"); sinir = np.linspace(0, N, CEK + 1).astype(int)
     isler = [(int(sinir[k]), int(sinir[k + 1]), os.path.join(ISK, f"p{k:03d}.mp4")) for k in range(CEK) if sinir[k + 1] > sinir[k]]
     if CEK == 1: sonuc = [parca_ciz(isler[0])]
-    else:
+    elif "fork" in mp.get_all_start_methods():
         with mp.get_context("fork").Pool(CEK) as havuz: sonuc = havuz.map(parca_ciz, isler, chunksize=1)
+    else:                                         # Windows: fork yok. Durum bir kez diske, her işçi oradan yükler
+        _yol = os.path.join(ISK, "durum.pkl"); _boy, _atla, _cp = durum_yaz(_yol)
+        adim(f"spawn durumu yazıldı ({_boy / 2**20:.0f} MB; cloudpickle: {', '.join(_cp) or 'yok'}; atlanan: {', '.join(_atla) or 'yok'})")
+        with mp.get_context("spawn").Pool(CEK, initializer=isci_kur, initargs=(_yol,)) as havuz: sonuc = havuz.map(parca_ciz, isler, chunksize=1)
     KARE, fark, ozet = {}, [], []
     for k_, f_, o_ in sonuc: KARE.update(k_); fark += f_; ozet += o_
     open(os.path.join(ISK, "liste.txt"), "w", encoding="utf-8").write("".join(f"file '{y}'\n" for _, _, y in isler))
