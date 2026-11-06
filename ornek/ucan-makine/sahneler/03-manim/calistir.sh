@@ -2,7 +2,10 @@
 # Sahne 3 (Manim): video.mp4 + kontrol.png + olaylar.json
 set -e
 cd "$(dirname "$0")"
-PY="${MANIM_PY:-python3}"   # Manim kurulu python; başka bir ortamsa MANIM_PY ile ver
+# Manim kurulu python: MANIM_PY > repo kökündeki .venv-manim (macOS/Linux bin/, Windows Scripts/) > python3
+PY="${MANIM_PY:-}"
+for a in ../../../../.venv-manim/bin/python ../../../../.venv-manim/Scripts/python.exe; do [ -z "$PY" ] && [ -x "$a" ] && PY="$a"; done
+PY="${PY:-python3}"
 T=$(mktemp -d)
 $PY -m manim render -r 1920,1080 --fps 30 --media_dir "$T" -v WARNING sahne.py Kaldirma
 SRC=$(find "$T" -name Kaldirma.mp4 | head -1)

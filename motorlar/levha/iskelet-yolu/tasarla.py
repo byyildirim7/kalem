@@ -35,5 +35,5 @@ for k, g in P.items():
 g = P["C"]; d.ellipse([g["c"][0] - 12, g["c"][1] - 12, g["c"][0] + 12, g["c"][1] + 12], fill=KIR)
 im.save("iskelet.png")
 json.dump(dict(W=W, H=H, modul=M, parcalar=P, surucu="W", zincir=[["W", "A"], ["A", "B"], ["B", "C"]]),
-          open("geometri.json", "w"), indent=1)
+          open("geometri.json", "w", encoding="utf-8"), indent=1)
 print({k: (v["c"], round(v["r"])) for k, v in P.items()})

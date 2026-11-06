@@ -19,7 +19,7 @@ from scipy import ndimage
 from PIL import Image, ImageDraw, ImageFont
 
 D = os.path.dirname(os.path.abspath(__file__))
-T = json.load(open(sys.argv[1])); AD = T["ad"]; HIZLI = "--hizli" in sys.argv
+T = json.load(open(sys.argv[1], encoding="utf-8")); AD = T["ad"]; HIZLI = "--hizli" in sys.argv
 _arg = lambda k, v=None: sys.argv[sys.argv.index(k) + 1] if k in sys.argv else v
 SEVIYE, VARYANT = _arg("--seviye", "8"), _arg("--varyant")
 if T.get("ders"): AD = AD + ("-seviye8" if SEVIYE == "8" else "-lise" + (f"-{VARYANT}" if VARYANT else ""))
@@ -698,9 +698,9 @@ if __name__ == "__main__":
         with mp.get_context("fork").Pool(CEK) as havuz: sonuc = havuz.map(parca_ciz, isler, chunksize=1)
     KARE, fark, ozet = {}, [], []
     for k_, f_, o_ in sonuc: KARE.update(k_); fark += f_; ozet += o_
-    open(os.path.join(ISK, "liste.txt"), "w").write("".join(f"file '{y}'\n" for _, _, y in isler))
+    open(os.path.join(ISK, "liste.txt"), "w", encoding="utf-8").write("".join(f"file '{y}'\n" for _, _, y in isler))
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", os.path.join(ISK, "liste.txt"), "-c", "copy", C + "-dur.mp4"], check=True)
-    open(C + "-ozet.txt", "w").write("\n".join(ozet) + "\n"); shutil.rmtree(ISK, ignore_errors=True)
+    open(C + "-ozet.txt", "w", encoding="utf-8").write("\n".join(ozet) + "\n"); shutil.rmtree(ISK, ignore_errors=True)
     adim(f"kareler yazıldı ({CEK} çekirdek, {N} kare, mp4 birleştirildi)")
     def izg(ks, ad, cols, sz):
         Tl = []
@@ -720,4 +720,4 @@ if __name__ == "__main__":
         yak.append(np.hstack(sat))
     cv2.imwrite(C + "-yakin.png", np.vstack(yak)); adim("kontrol görüntüleri")
     en = max(fark); s = "\n".join([f"{a}: {b} sn" for a, b in OLC] + rap + [f"oluşumda en büyük kare farkı {max(f for f, i in fark if i < OL):.3f}", f"tüm videoda en büyük kare farkı {en[0]:.3f} (kare {en[1]})", f"kare {N} ({N / 30:.1f} sn)"])
-    open(C + "-olcum.txt", "w").write(s + "\n"); print(s)
+    open(C + "-olcum.txt", "w", encoding="utf-8").write(s + "\n"); print(s)

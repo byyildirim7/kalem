@@ -3,7 +3,7 @@
 Renk = taraf: kırmızı (F, d1, x), çivit (G, d2, h), okra (P). Oklar ve ↔ ölçüler renk maskesinin bileşenlerinden; px -> N (ok ölçeği), px -> m (bölme/birim).
   python3 ders_olc.py <levhalar/ad.json> <video adı>"""
 import json, sys, math, cv2, numpy as np
-T = json.load(open(sys.argv[1])); V = sys.argv[2]; yol = f"cikti/{V}-v4-dur.mp4"; SC = 1080 / 1024; OX = (1920 - 1536 * SC) / 2
+T = json.load(open(sys.argv[1], encoding="utf-8")); V = sys.argv[2]; yol = f"cikti/{V}-v4-dur.mp4"; SC = 1080 / 1024; OX = (1920 - 1536 * SC) / 2
 c = cv2.VideoCapture(yol); NK = int(c.get(cv2.CAP_PROP_FRAME_COUNT)); c.set(cv2.CAP_PROP_POS_FRAMES, NK - 1); _, f = c.read()
 hsv = cv2.cvtColor(f, cv2.COLOR_BGR2HSV); Hh, Ss, Vv = hsv[..., 0].astype(int), hsv[..., 1].astype(int), hsv[..., 2].astype(int)
 if T.get("stil") == "blueprint":                     # amber (giriş), camgöbeği (çıkış), açık sarı (P)
@@ -79,4 +79,4 @@ else:
     hb, xb, h2 = dusey("c", yk[2] + 40, en_az=40, cubuk=True), dusey("r", hk[2] + 44, en_az=40, cubuk=True), dusey("c", hk[2] + 68, en_az=40, cubuk=True)
     if hb and xb: yaz(f"yol: h ↔ {hb['h']:.1f} px = {hb['h'] / d['birim'] * .5:.3f} m (yükün alt kenarı {hb['y0']:.0f} -> {hb['y1']:.0f}), x ↔ {xb['h']:.1f} px = {xb['h'] / d['birim'] * .5:.3f} m (tutamağın alt kenarı), x/h = {xb['h'] / hb['h']:.3f} (beklenen 2,000)"
                       + (f"; 2h karşılaştırma {h2['h']:.1f} px = x'in {h2['h'] / xb['h']:.3f} katı" if h2 else ""))
-open(f"cikti/{V}-v4-olcum.txt", "a").write("\n".join(out) + "\n"); print("\n".join(out))
+open(f"cikti/{V}-v4-olcum.txt", "a", encoding="utf-8").write("\n".join(out) + "\n"); print("\n".join(out))

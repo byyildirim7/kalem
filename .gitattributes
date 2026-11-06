@@ -1,0 +1,2 @@
+# Betikler her sistemde LF kalsın: Windows'ta Git satır sonlarını CRLF'ye çevirirse bash satır sonundaki CR karakteri yüzünden kırılabilir
+*.sh text eol=lf

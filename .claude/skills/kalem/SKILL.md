@@ -55,7 +55,8 @@ Bu tablo bir kişinin zevkiyle kuruldu: 20 araç aynı sahneyle yarıştırıld�
 - Tarayıcı motorları: sayfa `/ortak/surucu.js`'teki `surucu(kur, kare, KARE)`'yi çağırır, `kare(f)` çizilmiş bir canvas döndürür. Yakalama: `python3 ortak/yakala.py <sayfa yolu> <kare klasörü> [genişlik yükseklik]`, sonra ffmpeg ile mp4.
 - `olaylar.json`: `[{"kare": 12, "tur": "cizgi|tik|vurus|dusme|hisirti|parilti|kanat|sayac", "guc": 0-1}]`. Görüntüdeki anla aynı kare. Ses buradan üretilir, o yüzden ses ile görüntü hiç kaymaz.
 - Tarayıcı sayfasını yakalamadan önce JS'i `node --check` ile sına; sözdizimi hatasında sayfa hiç yüklenmez ve yakalayıcı 60 sn sonra durur.
-- Manim: repo kökünde `.venv-manim/bin/python` varsa onu kullan (`MANIM_PY`), LaTeX yoksa MathTex değil Text.
+- Manim: repo kökünde `.venv-manim/bin/python` (Windows: `.venv-manim/Scripts/python.exe`) varsa onu kullan (`MANIM_PY`), LaTeX yoksa MathTex değil Text. Fontta olmayan karakteri (ör. EB Garamond Italic'te ²) Windows'taki Pango başka fonttan tamamlamaz, kutu çizer: o karakteri `MarkupText` ile fontun düz kesiminden ver.
+- Python'da metin dosyasını hep `encoding="utf-8"` ile aç; Windows'ta varsayılan cp1254/cp1252'dir ve Türkçe karakterli JSON bozulur.
 - ffmpeg'de yazı çizme (drawtext) yok; yazı motorun içinde çizilir.
 - Türkçe harfler (Ç Ğ Ş İ Ö Ü) eksiksiz; büyük harfe `toLocaleUpperCase('tr')`.
 - İlk kare dolu: siyahtan açılış yok. Son ~15 kare sakin (geçiş oraya biner).
@@ -65,3 +66,4 @@ Bu tablo bir kişinin zevkiyle kuruldu: 20 araç aynı sahneyle yarıştırıld�
 ## Kurulum
 
 `./kurulum.sh` motorların paketlerini kurar (Node 20+, Python 3, ffmpeg, Google Chrome gerekir; Manim isteğe bağlı: `pip install manim`).
+Windows'ta betikler Git Bash ile çalışır; Chrome `C:\Program Files\Google\Chrome` ya da `%LOCALAPPDATA%` altındaysa kendiliğinden bulunur, değilse `CHROME` değişkeniyle ver.

@@ -7,7 +7,15 @@ for d in motorlar/paperjs motorlar/pixijs motorlar/threejs motorlar/yardimci mot
   [ -L "$K/$d/node_modules" ] && rm "$K/$d/node_modules"
   (cd "$K/$d" && npm install --no-audit --no-fund --loglevel=error)
 done
-command -v ffmpeg >/dev/null || echo "UYARI: ffmpeg yok (brew install ffmpeg)"
-[ -x "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ] || [ -n "$CHROME" ] || echo "UYARI: Google Chrome bulunamadı; CHROME değişkeniyle yolunu ver"
-python3 -c "import manim" 2>/dev/null || echo "Not: Manim kurulu değil; formül sahneleri için: python3 -m pip install manim (ya da MANIM_PY ile başka bir python göster)"
+case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) WIN=1 ;; *) WIN= ;; esac   # Windows'ta Git Bash
+if [ -n "$WIN" ]; then FF_KUR="winget install Gyan.FFmpeg"; else FF_KUR="brew install ffmpeg"; fi
+command -v ffmpeg >/dev/null || echo "UYARI: ffmpeg yok ($FF_KUR)"
+CHROME_VAR=
+for a in "$CHROME" "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+         "$PROGRAMFILES/Google/Chrome/Application/chrome.exe" "$LOCALAPPDATA/Google/Chrome/Application/chrome.exe"; do
+  [ -n "$a" ] && [ -f "$a" ] && CHROME_VAR=1
+done
+[ -n "$CHROME_VAR" ] || echo "UYARI: Google Chrome bulunamadı; CHROME değişkeniyle yolunu ver"
+python3 -c "import manim" 2>/dev/null || [ -x "$K/.venv-manim/bin/python" ] || [ -x "$K/.venv-manim/Scripts/python.exe" ] \
+  || echo "Not: Manim kurulu değil; formül sahneleri için: python3 -m venv .venv-manim && .venv-manim/bin/pip install manim (Windows: .venv-manim/Scripts/pip)"
 echo tamam

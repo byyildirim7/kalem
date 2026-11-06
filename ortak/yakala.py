@@ -6,7 +6,15 @@ Sayfa ortak/surucu.js'i kur()/kare(f) ile çağırır; kareler cikis/0000.png ..
 Zaman kare numarasından gelir; Math.random yok, iki koşu aynı kareyi verir."""
 import http.server, os, sys, subprocess, threading, shutil, tempfile
 KOK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CHROME = os.environ.get("CHROME", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")   # sayfa günlüğü her karakteri taşıyabilir; Windows konsolu cp1252/cp1254
+def chrome_bul():   # CHROME değişkeni > işletim sisteminin bilinen yolları > PATH
+    if os.environ.get("CHROME"): return os.environ["CHROME"]
+    adaylar = {"darwin": ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"],
+               "win32": [os.path.join(os.environ.get(v, ""), "Google", "Chrome", "Application", "chrome.exe") for v in ("PROGRAMFILES", "PROGRAMFILES(X86)", "LOCALAPPDATA")]}
+    for a in adaylar.get(sys.platform, []) + [shutil.which(n) or "" for n in ("google-chrome", "chromium", "chrome")]:
+        if a and os.path.exists(a): return a
+    sys.exit("Chrome bulunamadı; CHROME değişkeniyle yolunu ver")
+CHROME = chrome_bul()
 sayfa, cikis = sys.argv[1], os.path.abspath(sys.argv[2])
 W, H = (int(sys.argv[3]), int(sys.argv[4])) if len(sys.argv) > 4 else (1920, 1080)
 shutil.rmtree(cikis, ignore_errors=True); os.makedirs(cikis)
@@ -31,7 +39,9 @@ http.server.ThreadingHTTPServer.allow_reuse_address = True
 srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), I); port = srv.server_address[1]
 threading.Thread(target=srv.serve_forever, daemon=True).start()
 prof = tempfile.mkdtemp(prefix="vm-yakala-")
-p = subprocess.Popen([CHROME, "--headless=new", f"--user-data-dir={prof}", "--no-first-run", "--use-angle=metal", "--enable-gpu",
+angle = ["--use-angle=metal"] if sys.platform == "darwin" else []   # Metal yalnız macOS'ta; Windows kendi varsayılanını (D3D11) kullanır
+# --expose-gc: surucu.js birkaç karede bir gc() çağırır; büyük PNG blob'ları birikip Chrome'un blob sınırını doldurmasın
+p = subprocess.Popen([CHROME, "--headless=new", f"--user-data-dir={prof}", "--no-first-run", *angle, "--enable-gpu", "--js-flags=--expose-gc",
                       "--ignore-gpu-blocklist", f"--window-size={W},{H}", f"http://127.0.0.1:{port}/{sayfa}"],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 try:

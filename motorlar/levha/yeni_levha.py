@@ -14,7 +14,7 @@ def codex(tur):
              f"Görsel 1536x1024 olsun, iskeletle birebir örtüşsün. Çıktıyı {cik} adıyla bu klasöre kaydet, sonra {bit} yaz.")
     # İSTEM -i'den ÖNCE (yoksa -i istemi yutar); stdin kapalı
     return subprocess.Popen(["codex", "exec", "--skip-git-repo-check", "--sandbox", "workspace-write", "-C", K, istem, "-i", os.path.join(K, isk)],
-                            stdin=subprocess.DEVNULL, stdout=open(os.path.join(K, log), "w"), stderr=subprocess.STDOUT), os.path.join(K, cik)
+                            stdin=subprocess.DEVNULL, stdout=open(os.path.join(K, log), "w", encoding="utf-8"), stderr=subprocess.STDOUT), os.path.join(K, cik)
 t = time.time(); subprocess.run([sys.executable, "tasarla.py"], cwd=K, check=True); adim("tasarım", t)
 if "--stil" in sys.argv and sys.argv[sys.argv.index("--stil") + 1] == "blueprint":   # Codex'siz: görseller koddan, belirlenimci
     import json
@@ -23,8 +23,8 @@ if "--stil" in sys.argv and sys.argv[sys.argv.index("--stil") + 1] == "blueprint
         ev = dict(os.environ, LEVHA_REF_KLASOR=os.path.join(K, "blueprint")); subprocess.run([sys.executable, os.path.join(D, "incelt_mek.py"), K, AD], check=True, env=ev)
     yb = os.path.join(D, "levhalar", AD + "-blueprint.json")
     if not os.path.exists(yb):                        # ilk kez: defter tanımından türet (balon listesi yok)
-        T = json.load(open(os.path.join(D, "levhalar", AD + ".json"))); T.update(gorsel=os.path.relpath(os.path.join(K, "blueprint", "levha.png"), D), gorsel_b=os.path.relpath(os.path.join(K, "blueprint", "govde.png"), D), stil="blueprint")
-        json.dump(T, open(yb, "w"), ensure_ascii=False, indent=1)
+        T = json.load(open(os.path.join(D, "levhalar", AD + ".json"), encoding="utf-8")); T.update(gorsel=os.path.relpath(os.path.join(K, "blueprint", "levha.png"), D), gorsel_b=os.path.relpath(os.path.join(K, "blueprint", "govde.png"), D), stil="blueprint")
+        json.dump(T, open(yb, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     EK = [a for i, a in enumerate(sys.argv) if a in ("--seviye", "--varyant") or (i > 0 and sys.argv[i - 1] in ("--seviye", "--varyant"))]
     t = time.time(); subprocess.run([sys.executable, os.path.join(D, "levha.py"), yb] + EK, check=True); adim("render", t)
     print("süreler:", SURE); sys.exit(0)
@@ -37,13 +37,13 @@ if "--codex-yok" not in sys.argv:
 for f in ("levha.png", "govde.png"):             # govde.png yalnız tasarım iskelet-govde.png ürettiyse gerekir (dişli zinciri üretmez)
     if f == "govde.png" and not os.path.exists(os.path.join(K, "iskelet-govde.png")): continue
     if not os.path.exists(os.path.join(K, f)): sys.exit(f"{f} yok: Codex adımını çalıştır")
-if json.load(open(os.path.join(K, "geometri.json"))).get("tur") == "mekanizma":
+if json.load(open(os.path.join(K, "geometri.json"), encoding="utf-8")).get("tur") == "mekanizma":
     t = time.time(); subprocess.run([sys.executable, os.path.join(D, "incelt_mek.py"), K, AD], check=True); adim("incelt", t)
 elif not os.path.exists(os.path.join(D, "levhalar", AD + ".json")): sys.exit(f"levhalar/{AD}.json yok: dişli zinciri tanımı elle yazılır (iskelet-yolu örneğine bak)")
 EK = [a for i, a in enumerate(sys.argv) if a in ("--seviye", "--varyant") or (i > 0 and sys.argv[i - 1] in ("--seviye", "--varyant"))]
 t = time.time(); subprocess.run([sys.executable, os.path.join(D, "levha.py"), os.path.join(D, "levhalar", AD + ".json")] + EK, check=True); adim("render", t)
 import json
-if json.load(open(os.path.join(D, "levhalar", AD + ".json"))).get("ders"):      # ders levhası: sayıları render karesinden ölç
+if json.load(open(os.path.join(D, "levhalar", AD + ".json"), encoding="utf-8")).get("ders"):      # ders levhası: sayıları render karesinden ölç
     sv = EK[EK.index("--seviye") + 1] if "--seviye" in EK else "8"; vr = EK[EK.index("--varyant") + 1] if "--varyant" in EK else None
     ad = AD + ("-seviye8" if sv == "8" else "-lise" + (f"-{vr}" if vr else "")); subprocess.run([sys.executable, os.path.join(D, "ders_olc.py"), os.path.join(D, "levhalar", AD + ".json"), ad], cwd=D, check=True)
 print("süreler:", SURE, "->", os.path.join(D, "cikti", AD + "-v4-dur.mp4"))

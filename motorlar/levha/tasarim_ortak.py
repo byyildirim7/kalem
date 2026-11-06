@@ -66,6 +66,6 @@ Bunu **Leonardo da Vinci defteri tarzında el çizimi bir gravüre çevir: `govd
 
 Bitince `govde.png` olarak bu klasöre kaydet ve `bitti-govde.txt` yaz.
 """
-    open(f"{klasor}/ISTEK.md", "w").write(a); open(f"{klasor}/ISTEK-govde.md", "w").write(b)
+    open(f"{klasor}/ISTEK.md", "w", encoding="utf-8").write(a); open(f"{klasor}/ISTEK-govde.md", "w", encoding="utf-8").write(b)
 
-def geometri_yaz(klasor, G): json.dump(G, open(f"{klasor}/geometri.json", "w"), ensure_ascii=False, indent=1)
+def geometri_yaz(klasor, G): json.dump(G, open(f"{klasor}/geometri.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)

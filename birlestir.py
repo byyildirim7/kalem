@@ -9,10 +9,11 @@ Geçiş, A'nın son N karesiyle B'nin ilk N karesini üst üste bindirir; toplam
 import json, os, shutil, subprocess, sys
 
 KOK = os.path.dirname(os.path.abspath(__file__))
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")   # Windows'ta varsayılan cp1254; Türkçe çıktı UTF-8 terminalde bozuluyordu
 proje = sys.argv[1].rstrip("/")
 GECIS = sys.argv[sys.argv.index("--gecis") + 1] if "--gecis" in sys.argv else "BookFlip"
 P = os.path.join(KOK, proje)
-Z = json.load(open(os.path.join(P, "zaman.json")))
+Z = json.load(open(os.path.join(P, "zaman.json"), encoding="utf-8"))
 FPS, W, H, N = Z["fps"], Z["genislik"], Z["yukseklik"], Z["gecis_kare"]
 IS = os.path.join(P, "_is"); shutil.rmtree(IS, ignore_errors=True); os.makedirs(IS)
 KOD = ["-c:v", "libx264", "-crf", "16", "-pix_fmt", "yuv420p", "-r", str(FPS)]
@@ -37,7 +38,7 @@ for i, s in enumerate(S):
     ff("-i", s["_v"], "-vf", f"trim=start_frame={bas}:end_frame={son},setpts=PTS-STARTPTS", "-an", *KOD, g)
     parca.append(g)
     oj = os.path.join(P, "sahneler", s["klasor"], "olaylar.json")
-    for o in (json.load(open(oj)) if os.path.exists(oj) else []):
+    for o in (json.load(open(oj, encoding="utf-8")) if os.path.exists(oj) else []):
         olay.append({**o, "kare": o["kare"] + ofs, "sahne": s["no"]})
     if i < len(S) - 1:
         d = os.path.join(IS, f"gecis{i}"); os.makedirs(d + "/a"); os.makedirs(d + "/b")
@@ -89,14 +90,14 @@ if "--etiket" in sys.argv:
         zincir.append(f"{onceki}[e{k}]overlay={x}:{y}:enable='between(t,{ta:.3f},{tb:.3f})'[v{k}]"); onceki = f"[v{k}]"
     _etiket = (girdi, zincir, onceki, os.path.join(IS, "etiketli.mp4"))
 liste = os.path.join(IS, "liste.txt")
-open(liste, "w").write("".join(f"file '{p}'\n" for p in parca))
+open(liste, "w", encoding="utf-8").write("".join(f"file '{p}'\n" for p in parca))
 sessiz = os.path.join(IS, "sessiz.mp4")
 ff("-f", "concat", "-safe", "0", "-i", liste, "-c", "copy", sessiz)
 if "--etiket" in sys.argv:
     girdi, zincir, onceki, etiketli = _etiket
     ff("-i", sessiz, *girdi, "-filter_complex", ";".join(zincir), "-map", onceki, "-frames:v", str(TOPLAM), *KOD, etiketli); sessiz = etiketli
 olay.sort(key=lambda o: o["kare"])
-json.dump({"fps": FPS, "kare": TOPLAM, "olaylar": olay}, open(os.path.join(IS, "olaylar.json"), "w"), ensure_ascii=False, indent=0)
+json.dump({"fps": FPS, "kare": TOPLAM, "olaylar": olay}, open(os.path.join(IS, "olaylar.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=0)
 wav = os.path.join(IS, "ses.wav")
 subprocess.run(["node", os.path.join(KOK, "ses/render.mjs"), os.path.relpath(os.path.join(IS, "olaylar.json"), KOK), wav], check=True)
 cikti = os.path.join(P, "cikti.mp4")

@@ -8,7 +8,7 @@ import json, os, sys, zlib, copy
 import cv2, numpy as np
 D = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, D); import mekanizma as MEK
 K = os.path.abspath(sys.argv[1]); AD = sys.argv[2] if len(sys.argv) > 2 else os.path.basename(os.path.normpath(K))
-GEO = json.load(open(os.path.join(K, "geometri.json"))); REF = cv2.imread(os.path.join(os.environ.get("LEVHA_REF_KLASOR", K), "levha.png")) ; ISK = cv2.imread(os.path.join(K, "iskelet.png"))   # LEVHA_REF_KLASOR: blueprint modunda Codex levhası yoksa referans yerine blueprint/ görseli
+GEO = json.load(open(os.path.join(K, "geometri.json"), encoding="utf-8")); REF = cv2.imread(os.path.join(os.environ.get("LEVHA_REF_KLASOR", K), "levha.png")) ; ISK = cv2.imread(os.path.join(K, "iskelet.png"))   # LEVHA_REF_KLASOR: blueprint modunda Codex levhası yoksa referans yerine blueprint/ görseli
 H0, W0 = REF.shape[:2]; ink = lambda im, s: cv2.GaussianBlur(255 - cv2.cvtColor(im, cv2.COLOR_BGR2GRAY).astype(np.float32), (0, 0), s)
 Ia, Is = ink(REF, 3), ink(ISK, 3); ARA = 15; KAY = {}
 for p in GEO["parcalar"]:
@@ -50,7 +50,7 @@ rnd = np.random.default_rng(zlib.crc32(AD.encode()))
 T.update(ad=AD, gorsel=os.path.relpath(os.path.join(K, "levha.png"), D), folio=f"fol. {int(rnd.integers(3, 60))} {'rv'[int(rnd.integers(0, 2))]}.", on=[], dolgu=[], incelt={k: list(v) for k, v in KAY.items()})
 if os.path.exists(os.path.join(K, "govde.png")): T["gorsel_b"] = os.path.relpath(os.path.join(K, "govde.png"), D)
 T = json.loads(json.dumps(T, default=float))
-yol = os.path.join(D, "levhalar", AD + ".json"); json.dump(T, open(yol, "w"), ensure_ascii=False, indent=1); print("->", yol)
+yol = os.path.join(D, "levhalar", AD + ".json"); json.dump(T, open(yol, "w", encoding="utf-8"), ensure_ascii=False, indent=1); print("->", yol)
 # %50 bindirme: tasarım / çizim (a) ve (b)
 os.makedirs(os.path.join(D, "cikti"), exist_ok=True); pan = []
 for gor, isk in (("levha.png", "iskelet.png"), ("govde.png", "iskelet-govde.png")):

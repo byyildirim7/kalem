@@ -1,6 +1,6 @@
 #!/bin/bash
 # Sahne 4: Matter.js. Paket kökünden bağımsız çalışır.
-set -e
+set -eo pipefail
 D="$(cd "$(dirname "$0")" && pwd)"; KOK="$(cd "$D/../../../.." && pwd)"; T="$(mktemp -d)"
 cd "$KOK"
 python3 ortak/yakala.py ornek/ucan-makine/sahneler/04-matter/sayfa.html "$T/k" | tee "$T/log.txt"

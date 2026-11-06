@@ -11,6 +11,8 @@ export async function surucu(kur, kare, KARE = 240) {
       const cv = await kare(f);
       const b = await new Promise((ok) => cv.toBlob(ok, "image/png"));
       await fetch("/kare?i=" + f, { method: "POST", body: b });
+      // toBlob'un PNG'leri GC gelene kadar blob deposunda kalır; 1080p'de ~150 karede depo dolup istekler düşüyordu (yakala.py --expose-gc verir)
+      if (f % 10 === 9) globalThis.gc?.();
     }
     await fetch("/bitti", { method: "POST", body: "tamam" });
   } catch (e) { await log("HATA " + (e.stack || e)); await fetch("/bitti", { method: "POST", body: "hata " + e }); }

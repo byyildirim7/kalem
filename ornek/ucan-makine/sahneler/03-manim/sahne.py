@@ -73,7 +73,8 @@ class Kaldirma(Scene):
         # formül parçaları
         def T(s, f=GAR, c=MUR, sz=112, **k): return Text(s, font=f, color=c, font_size=sz, **k)
         L = T("L", FELL); eq = T("="); yarim = T("½"); rho = T("ρ", slant=ITALIC)
-        v2 = T("v²", slant=ITALIC); S = T("S", slant=ITALIC)
+        # EB Garamond Italic'te ² yok: macOS başka fonttan tamamlıyor, Windows'ta Pango kutu çiziyordu. ² düz kesimden gelir.
+        v2 = MarkupText('v<span style="normal">²</span>', font=GAR, slant=ITALIC, color=MUR, font_size=112); S = T("S", slant=ITALIC)
         CL = MarkupText('C<sub>L</sub>', font=GAR, color=MUR, font_size=112)
         parca = VGroup(L, eq, yarim, rho, v2, S, CL).arrange(RIGHT, buff=0.5, aligned_edge=DOWN).move_to([0, 1.35, 0])
         self.add(L, eq)   # 0. karede formül başlamış

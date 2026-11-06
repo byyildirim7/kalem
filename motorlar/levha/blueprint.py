@@ -38,7 +38,7 @@ def tarama(m, aralik=11, aci=45):
     return (t.astype(np.float32) / 255) * (m > 0)
 
 def ciz(K, ad):
-    t0 = time.time(); G = json.load(open(os.path.join(K, "geometri.json"))); isk = cv2.imread(os.path.join(K, "iskelet.png"))
+    t0 = time.time(); G = json.load(open(os.path.join(K, "geometri.json"), encoding="utf-8")); isk = cv2.imread(os.path.join(K, "iskelet.png"))
     mek = G.get("tur") == "mekanizma"
     if mek: parca = [p for p in G["parcalar"]]; govde = G.get("govde", [])
     else:                                            # eski dişli tasarımı (iskelet-yolu): parçalar dişli, gövde tasarla.py'deki kutular
